@@ -114,6 +114,9 @@
 <!-- 5. Game Rule Functions -->
 <!-- 6. Game Play Loop -->
 
+![alt text](think/IMG_20251128_164220.jpg)
+![alt text](think/IMG_20251128_170628.jpg)
+
 [Back to Table of Contents](#table-of-contents)
 
 ---
