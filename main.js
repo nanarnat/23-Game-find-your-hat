@@ -19,42 +19,80 @@ function makeBoard(input){
 		];
 		return board;
 	} else{
-		row = customRow();
-		col = customCol();
+		let row = customRow();
+		let col = customCol();
 		const board = [];
-		let playerSpawn = False;
-		let hatSpawn = False;
+		let playerSpawn = false;
+		let hatSpawn = false;
+		let i = 0;
+		let j = 0;
+		for (i=0 ; i < row ; i++){
+			board[i] = [];
+			for (j=0; j < col; j++){
+				board[i][j] = random(playerSpawn,hatSpawn);
+				if (board[i][j] === "*" ){
+					playerSpawn = true;
+				} else if (board[i][j] === "^"){
+					hatSpawn = true;
+				}
+			}
+		}
 		return board;
 	}
 }
 
-function random(){
-	
-	if (PP) {
+function random(playerSpawn,hatSpawn){
+	if (!playerSpawn && !hatSpawn) {
 		const tiles = Math.floor(Math.random()*4);
 		switch (tiles){
 			case 1 : 
-			PP = false;
+			playerSpawn = true;
 			return PLAYER; 
 			break;
 			case 2 : 
 			return HOLE; 
 			break;
 			case 3 : 
+			hatSpawn = true;
 			return HAT; 
 			break;
 			default: 
 			return EMPTY; 
 			break;
 		}
-	} else {
+	} else if (!playerSpawn) {
 		const tiles = Math.floor(Math.random()*3);
 		switch (tiles){
 			case 1 : 
-			return HAT;
+			playerSpawn = true;
+			return PLAYER; 
 			break;
 			case 2 : 
 			return HOLE; 
+			break;
+			default: 
+			return EMPTY; 
+			break;
+		} 
+	} else if (!hatSpawn) {
+		const tiles = Math.floor(Math.random()*3);
+		switch (tiles){
+			case 1 : 
+			hatSpawn = true;
+			return HAT; 
+			break;
+			case 2 : 
+			return HOLE; 
+			break;
+			default: 
+			return EMPTY; 
+			break;
+		} 
+	} else {
+		const tiles = Math.floor(Math.random()*2);
+		switch (tiles){
+			case 1 : 
+			return HOLE;
 			break;
 			default: 
 			return EMPTY; 
@@ -90,7 +128,7 @@ function customCol(){
 				console.log("Invalid format")
 			}
 		}
-	return rowNum;
+	return colNum;
 }
 
 // Game state
@@ -99,6 +137,17 @@ let playerRow = 0;
 let playerCol = 0;
 let playing = true;
 
+function findPlayer(board){
+	let i = 0;
+	let j = 0;
+	for (i=0; i<board.length; i++){
+		for (j=0; j<board[i].length; j++){
+			if ((board[i][j]) === PLAYER) {
+				return { row :i, col :j};
+			}
+		}
+	}
+}
 // Print board
 function printBoard(board) {
 	console.clear(); // call console.clear() before print each move
@@ -147,7 +196,7 @@ function whichWay(input){
 		}
 	}
 	return con;
-}	
+}
 
 function moveUp(){
 	if (playerRow > 0){
@@ -267,18 +316,17 @@ function gameStart(input) {
 			const hBoard = false
 			return hBoard;
 		} else {
-			console.log(input);
-			input = prompt("Please answer (y/n) format: ");
+			input = prompt("Please answer (y/n) format: ")
 		}
 	}
 }
 
 const input = prompt("Do you want to play hardcoded board (y/n): ");
 let board = makeBoard(gameStart(input) );
-if (gameStart(input) !== true) {
-	playerRow = 0;
-	playerCol = 0;
-}
+let where = findPlayer(board);
+playerCol = where.col;
+playerRow = where.row;
+
 const rowLength = board.length;
 const colLength = board[0].length;
 gameLoop();
