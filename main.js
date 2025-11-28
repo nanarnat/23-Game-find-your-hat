@@ -12,12 +12,14 @@ const HAT = "^";
 // Hardcoded board
 function makeBoard(input){
 	if (input){
-	let board = [
-	[PLAYER, EMPTY, HOLE],
-	[EMPTY, HOLE, EMPTY],
-	[EMPTY, HAT, EMPTY],
-	];
+		let board = [
+		[PLAYER, EMPTY, HOLE],
+		[EMPTY, HOLE, EMPTY],
+		[EMPTY, HAT, EMPTY],
+		];
+		return board;
 	}
+	
 }
 
 // Game state
@@ -28,8 +30,10 @@ let playing = true;
 // Print board
 function printBoard(board) {
 	console.clear(); // call console.clear() before print each move
-	const pBoard = board.arr.join();
-	console.log(pBoard);
+	for (let i = 0; i < rowLength; i++) {
+		const pBoard = board[i].join("");
+		console.log(pBoard);
+	}
 }
 
 // Game play loop
@@ -37,7 +41,7 @@ function gameLoop() {
 	let gameContinue = true;
 	while (gameContinue){
 		printBoard(board);
-		moves.push(board[playerRow][playerCol]);
+		//moves.push(board[playerRow][playerCol]);
 		const input = prompt("Which way? (w/a/s/d): ");
 		whichWay(input);
 	}
@@ -73,19 +77,47 @@ function whichWay(input){
 }
 
 function moveUp(){
-	playerRow--;
+	if (playerRow > 0){
+		playerRow--;
+		moves.push(board[playerRow][playerCol]);
+		return playerRow;
+	} else {
+		const outOfBoard = true;
+		return outOfBoard;
+	}	
 }
 
 function moveDown(){
-	playerRow++;
+	if (playerRow < rowLength){
+		playerRow++;
+		moves.push(board[playerRow][playerCol]);
+		return playerRow;
+	} else {
+		const outOfBoard = true;
+		return outOfBoard;
+	}
 }
 
 function moveLeft(){
-	playerCol--;
+	if (playerCol > 0){
+		playerCol--;
+		moves.push(board[playerRow][playerCol]);
+		return playerCol;
+	} else {
+		const outOfBoard = true;
+		return outOfBoard;
+	}
 }
 
 function moveRight(){
-	playerCol++;
+	if (playerCol < colLength){
+		playerCol++;
+		moves.push(board[playerRow][playerCol]);
+		return playerCol;
+	} else {
+		const outOfBoard = true;
+		return outOfBoard;
+	}
 }
 
 function gameStart(input) {
@@ -110,6 +142,9 @@ function gameStart(input) {
 	}
 }
 
-/* const input = prompt("Do you want to play hardcoded board (y/n): ");
-gameStart(input); */
+const input = prompt("Do you want to play hardcoded board (y/n): ");
+let board = makeBoard(gameStart(input) );
+const rowLength = board.length;
+const colLength = board[0].length;
+gameLoop();
 
