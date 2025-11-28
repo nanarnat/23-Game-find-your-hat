@@ -18,11 +18,83 @@ function makeBoard(input){
 		[EMPTY, HAT, EMPTY],
 		];
 		return board;
+	} else{
+		row = customRow();
+		col = customCol();
+		const board = [];
+		let playerSpawn = False;
+		let hatSpawn = False;
+		return board;
 	}
+}
+
+function random(){
 	
+	if (PP) {
+		const tiles = Math.floor(Math.random()*4);
+		switch (tiles){
+			case 1 : 
+			PP = false;
+			return PLAYER; 
+			break;
+			case 2 : 
+			return HOLE; 
+			break;
+			case 3 : 
+			return HAT; 
+			break;
+			default: 
+			return EMPTY; 
+			break;
+		}
+	} else {
+		const tiles = Math.floor(Math.random()*3);
+		switch (tiles){
+			case 1 : 
+			return HAT;
+			break;
+			case 2 : 
+			return HOLE; 
+			break;
+			default: 
+			return EMPTY; 
+			break;
+		}
+	}
+}
+
+function customRow(){
+	let answer = true;
+	let rowNum;
+		while (answer){
+			const row = prompt("How many rows do you want?")
+			rowNum = Number(row);
+			if (rowNum !== 0 && !isNaN(rowNum) && Number.isInteger(rowNum)) {
+				answer = false;
+			} else {
+				console.log("Invalid format")
+			}
+		}
+	return rowNum;	
+}
+
+function customCol(){
+	let answer = true;
+	let colNum;
+		while (answer){
+			const col = prompt("How many cols do you want?")
+			colNum = Number(col);
+			if (colNum !== 0 && !isNaN(colNum) && Number.isInteger(colNum)) {
+				answer = false;
+			} else {
+				console.log("Invalid format")
+			}
+		}
+	return rowNum;
 }
 
 // Game state
+
 let playerRow = 0;
 let playerCol = 0;
 let playing = true;
@@ -41,31 +113,31 @@ function gameLoop() {
 	let gameContinue = true;
 	while (gameContinue){
 		printBoard(board);
-		//moves.push(board[playerRow][playerCol]);
 		const input = prompt("Which way? (w/a/s/d): ");
-		whichWay(input);
+		gameContinue = whichWay(input);
 	}
 }
 
 function whichWay(input){
 	let way = true;
+	let con = true;
 	while(way){
 		input = input.toLowerCase();
 		switch (input){
 			case "a": 
-			moveLeft(); 
+			con = moveLeft(); 
 			way = false;
 			break;
 			case "w": 
-			moveUp();	
+			con = moveUp();	
 			way = false; 
 			break;
 			case "s": 
-			moveDown(); 
+			con = moveDown(); 
 			way = false;
 			break;
 			case "d": 
-			moveRight(); 
+			con = moveRight(); 
 			way = false;
 			break;
 			default:
@@ -74,49 +146,108 @@ function whichWay(input){
 			break;
 		}
 	}
-}
+	return con;
+}	
 
 function moveUp(){
 	if (playerRow > 0){
+		const pastRow = playerRow;
+		const pastCol = playerCol;
 		playerRow--;
-		moves.push(board[playerRow][playerCol]);
-		return playerRow;
+		if (checkHole(playerCol, playerRow)){
+			console.log("Game over you fell in the hole");
+			return false;
+		}else if (checkHat(playerRow, playerCol)){
+			console.log("Victory!");
+		} else {
+			updateBoard(pastRow, pastCol, playerRow, playerCol);
+			return true;
+		}
 	} else {
-		const outOfBoard = true;
-		return outOfBoard;
+		return outOfBoard();
 	}	
 }
 
 function moveDown(){
-	if (playerRow < rowLength){
+	if (playerRow < rowLength-1){
+		const pastRow = playerRow;
+		const pastCol = playerCol;
 		playerRow++;
-		moves.push(board[playerRow][playerCol]);
-		return playerRow;
+		if (checkHole(playerCol, playerRow)){
+			console.log("Game over you fell in the hole");
+			return false;
+		} else if (checkHat(playerRow, playerCol)){
+			console.log("Victory!");
+		}else {
+			updateBoard(pastRow, pastCol, playerRow, playerCol);
+			return true;
+		}
 	} else {
-		const outOfBoard = true;
-		return outOfBoard;
+		return outOfBoard();
 	}
 }
 
 function moveLeft(){
 	if (playerCol > 0){
+		const pastRow = playerRow;
+		const pastCol = playerCol;
 		playerCol--;
-		moves.push(board[playerRow][playerCol]);
-		return playerCol;
+		if (checkHole(playerCol, playerRow)){
+			console.log("Game over you fell in the hole");
+			return false;
+		} else if (checkHat(playerRow, playerCol)){
+			console.log("Victory!");
+		}	else {
+			updateBoard(pastRow, pastCol, playerRow, playerCol);
+			return true;
+		}
 	} else {
-		const outOfBoard = true;
-		return outOfBoard;
+		return outOfBoard();
 	}
 }
 
 function moveRight(){
-	if (playerCol < colLength){
+	if (playerCol < colLength-1){
+		const pastRow = playerRow;
+		const pastCol = playerCol;
 		playerCol++;
-		moves.push(board[playerRow][playerCol]);
-		return playerCol;
+		if (checkHole(playerCol, playerRow)){
+			console.log("Game over you fell in the hole");
+			return false;
+		} else if (checkHat(playerRow, playerCol)){
+			console.log("Victory!");
+		}else {
+			updateBoard(pastRow, pastCol, playerRow, playerCol);
+			return true;
+		}
 	} else {
-		const outOfBoard = true;
-		return outOfBoard;
+		return outOfBoard();
+	}
+}
+
+function updateBoard(row,col,rowNew,colNew){
+	board[row][col] = EMPTY;
+	board[rowNew][colNew] = PLAYER;
+}
+
+function outOfBoard(){
+	console.log("Game over you fell out of board");
+	return false;
+}
+
+function checkHole(playerCol,playerRow){
+	if (board[playerRow][playerCol] === HOLE){
+		return true;
+	} else {
+		return false;
+	}
+}
+
+function checkHat(playerRow, playerCol){
+	if (board[playerRow][playerCol] === HAT){
+		return true;
+	} else {
+		return false;
 	}
 }
 
@@ -144,6 +275,10 @@ function gameStart(input) {
 
 const input = prompt("Do you want to play hardcoded board (y/n): ");
 let board = makeBoard(gameStart(input) );
+if (gameStart(input) !== true) {
+	playerRow = 0;
+	playerCol = 0;
+}
 const rowLength = board.length;
 const colLength = board[0].length;
 gameLoop();
